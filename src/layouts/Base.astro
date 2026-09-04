@@ -1,16 +1,35 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { siteName, siteDescription } from '../lib/site';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
+  /** OGP 画像のパスまたは URL。省略時は共通の /og-default.png */
+  ogImage?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  ogType?: 'website' | 'article';
 }
 
-const siteName = 'nakano'; // サイト名（ロゴ・タブタイトルに使う）
-const { title, description = 'イラスト作品のギャラリーサイト' } = Astro.props;
+const {
+  title,
+  description = siteDescription,
+  ogImage = '/og-default.png',
+  ogImageWidth = 1200,
+  ogImageHeight = 630,
+  ogType = 'website',
+} = Astro.props;
+
 const pageTitle = title ? `${title} — ${siteName}` : siteName;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(ogImage, Astro.site);
+
+// Google Fonts。レンダリングをブロックしないよう preload → stylesheet に切り替えて読み込む
+const fontsUrl =
+  'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400&family=Noto+Sans+JP:wght@300;400&display=swap';
 ---
 
 <!doctype html>
@@ -21,13 +40,29 @@ const pageTitle = title ? `${title} — ${siteName}` : siteName;
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} blog`} href="/rss.xml" />
+
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content={String(ogImageWidth)} />
+    <meta property="og:image:height" content={String(ogImageHeight)} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400&family=Noto+Sans+JP:wght@300;400&display=swap"
-    />
+    <link rel="preload" as="style" href={fontsUrl} onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href={fontsUrl} /></noscript>
   </head>
   <body>
     <Header siteName={siteName} />

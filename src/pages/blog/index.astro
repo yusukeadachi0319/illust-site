@@ -7,7 +7,7 @@ import { formatDate } from '../../lib/format';
 const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Base title="blog">
+<Base title="blog" description="制作や参加イベントについての記事。">
   <section class="section">
     <h1 class="section-title">blog</h1>
     <ul class="posts">

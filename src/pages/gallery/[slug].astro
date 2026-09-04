@@ -1,8 +1,7 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { formatDate } from '../../lib/format';
 
 export async function getStaticPaths() {
   const works = await getCollection('works');
@@ -12,9 +11,20 @@ export async function getStaticPaths() {
 const { work } = Astro.props;
 const { Content } = await render(work);
 const hasBody = work.body && work.body.trim().length > 0;
+
+// OGP にはこの作品の画像を使う（SNS 向けに JPEG・幅 1200px）
+const og = await getImage({ src: work.data.image, width: 1200, format: 'jpeg' });
+const description = work.data.description ?? `${work.data.title}（${work.data.date.getFullYear()}）`;
 ---
 
-<Base title={work.data.title} description={work.data.description}>
+<Base
+  title={work.data.title}
+  description={description}
+  ogImage={og.src}
+  ogImageWidth={Number(og.attributes.width)}
+  ogImageHeight={Number(og.attributes.height)}
+  ogType="article"
+>
   <article class="work">
     <div class="image">
       <Image
@@ -24,6 +34,7 @@ const hasBody = work.body && work.body.trim().length > 0;
         sizes="(max-width: 1100px) 100vw, 1052px"
         format="webp"
         loading="eager"
+        fetchpriority="high"
       />
     </div>
     <div class="meta">

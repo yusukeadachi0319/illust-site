@@ -150,8 +150,28 @@ about ページの「events」には全件が日付降順で並ぶので、終�
 | `src/components/Footer.astro` | フッターの SNS リンクと © 表記。BOOTH の URL は仮（登録後に差し替える） |
 | `src/pages/about.astro` | プロフィール文、SNS リンク（BOOTH の URL は仮） |
 | `src/pages/index.astro` | キービジュアル（`src/assets/key-visual.png`） |
-| `astro.config.mjs` | `site`（本番 URL。フェーズ2の sitemap / OGP で使う） |
+| `astro.config.mjs` | 先頭の `SITE_URL`（公開 URL）。独自ドメインに変えるときはここだけ直す。canonical / OGP / sitemap / RSS / robots.txt すべてに反映される |
+| `src/lib/site.ts` | `siteName`（サイト名）と `siteDescription`（既定の description）。レイアウト・RSS・OGP 画像で共有 |
+| `public/og-default.png` | 共通の OGP 画像（1200×630）。`node scripts/make-og-image.mjs` で再生成できる |
 | `public/cursor-pencil.png` | 鉛筆カーソル画像（32×32 透過 PNG、先端が左下 2,30 に来るように描く） |
+
+## meta / OGP / sitemap / RSS
+
+- 各ページの `<title>` と `description`、canonical、OGP、Twitter card は `src/layouts/Base.astro` が出力する。ページ側は `<Base title="..." description="...">` で渡すだけ。
+- OGP 画像は共通の `public/og-default.png`。作品ページ（`/gallery/[slug]`）だけはその作品の画像（幅 1200px の JPEG）を使う。
+- サイト名を変えたら `node scripts/make-og-image.mjs` で OGP 画像を作り直す（Astro 同梱の sharp を使うので追加インストール不要）。
+- sitemap は `@astrojs/sitemap` がビルド時に `/sitemap-index.xml` を生成する。`/robots.txt` にもその URL が入る。
+- ブログの RSS は `/rss.xml`（`src/pages/rss.xml.ts`）。各ページの head に `<link rel="alternate">` を出しているので RSS リーダーが自動検出できる。
+
+## ギャラリーのタグフィルタ
+
+`/gallery` 上部のタグをクリックすると絞り込まれ、URL が `/gallery?tag=original` のように変わる（「all」で解除）。
+作品の `tags` に書いたものが自動でタグ一覧に出るので、設定は不要。JS はこのページの表示切り替えだけで、ライブラリは使っていない。
+
+## パフォーマンス
+
+Google Fonts の CSS は `preload` → `stylesheet` の切り替えで非同期に読み込んでいる（レンダリングをブロックしない）。
+Lighthouse（モバイル）はフェーズ2時点で Performance 97〜100、Accessibility 100、Best Practices 96〜100、SEO 100。
 
 ## Cloudflare Pages へのデプロイ
 

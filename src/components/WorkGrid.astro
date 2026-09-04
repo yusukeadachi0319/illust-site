@@ -12,7 +12,7 @@ const { works } = Astro.props;
 <ul class="grid">
   {
     works.map((work) => (
-      <li>
+      <li data-tags={work.data.tags.join(' ')}>
         <a href={`/gallery/${work.id}`} class="img-link">
           <Image
             src={work.data.image}

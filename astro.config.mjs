@@ -1,10 +1,15 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
+
+// 公開 URL。独自ドメインに変えるときはこの1行だけ直す。
+// （canonical / OGP / sitemap / RSS / robots.txt はすべてここから生成される）
+const SITE_URL = 'https://illust-site.yusukeadachi0319.workers.dev';
 
 // https://astro.build/config
 export default defineConfig({
-  // 本番URLが決まったら差し替える（フェーズ2の sitemap / OGP / RSS で使う）
-  site: 'https://example.pages.dev',
+  site: SITE_URL,
   output: 'static',
   outDir: './dist',
+  integrations: [sitemap()],
 });

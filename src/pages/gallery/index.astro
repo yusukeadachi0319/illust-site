@@ -5,16 +5,25 @@ import WorkGrid from '../../components/WorkGrid.astro';
 
 const works = (await getCollection('works')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-// 全作品のタグ一覧（フェーズ2でこれをフィルタに使う）
+// 全作品のタグ一覧（フィルタに使う）
 const tags = [...new Set(works.flatMap((w) => w.data.tags))].sort();
 ---
 
-<Base title="gallery">
+<Base title="gallery" description="作品一覧。タグで絞り込みできます。">
   <section class="section">
     <div class="head">
       <h1 class="section-title">gallery</h1>
-      <ul class="tags">
-        {tags.map((tag) => <li>{tag}</li>)}
+      <ul class="tags" id="tag-filter">
+        <li><a href="/gallery" data-tag="">all</a></li>
+        {
+          tags.map((tag) => (
+            <li>
+              <a href={`/gallery?tag=${encodeURIComponent(tag)}`} data-tag={tag}>
+                {tag}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
     <WorkGrid works={works} />
@@ -31,7 +40,49 @@ const tags = [...new Set(works.flatMap((w) => w.data.tags))].sort();
   }
   .tags {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 24px;
   }
+  .tags a[aria-current='true'] {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    color: var(--blue-dark);
+  }
 </style>
+
+<script>
+  // タグフィルタ。?tag=xxx で絞り込み、all で解除。
+  // 静的HTMLに全作品が入っているので、JSは表示/非表示の切り替えと URL の更新だけ。
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('#tag-filter a[data-tag]'));
+  const items = Array.from(document.querySelectorAll<HTMLLIElement>('.grid > li[data-tags]'));
+  const known = new Set(links.map((a) => a.dataset.tag || ''));
+
+  function currentTag(): string {
+    const tag = new URLSearchParams(location.search).get('tag') || '';
+    return known.has(tag) ? tag : '';
+  }
+
+  function apply(tag: string) {
+    for (const li of items) {
+      const tags = (li.dataset.tags || '').split(' ');
+      li.hidden = tag !== '' && !tags.includes(tag);
+    }
+    for (const a of links) {
+      if ((a.dataset.tag || '') === tag) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    }
+  }
+
+  for (const a of links) {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tag = a.dataset.tag || '';
+      const url = tag ? `${location.pathname}?tag=${encodeURIComponent(tag)}` : location.pathname;
+      history.pushState(null, '', url);
+      apply(tag);
+    });
+  }
+  window.addEventListener('popstate', () => apply(currentTag()));
+  apply(currentTag());
+</script>
