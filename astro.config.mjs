@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 // 公開 URL。独自ドメインに変えるときはこの1行だけ直す。
 // （canonical / OGP / sitemap / RSS / robots.txt はすべてここから生成される）
-const SITE_URL = 'https://illust-site.lazysundayclub.workers.dev';
+const SITE_URL = 'https://illust-site.lazy-sunday-club.workers.dev';
 
 // https://astro.build/config
 export default defineConfig({
