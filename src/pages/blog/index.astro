@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { formatDate } from '../../lib/format';
+
+// 日付降順
+const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Base title="blog">
+  <section class="section">
+    <h1 class="section-title">blog</h1>
+    <ul class="posts">
+      {
+        posts.map((post) => (
+          <li class="post">
+            <span class="date">{formatDate(post.data.date)}</span>
+            <span class="title">
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+              {post.data.description && <span class="desc">{post.data.description}</span>}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .post {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--blue);
+  }
+  .post:last-child {
+    border-bottom: 1px solid var(--blue);
+  }
+  .title {
+    display: flex;
+    flex-direction: column;
+  }
+  .title a {
+    color: var(--blue-dark);
+  }
+  @media (max-width: 560px) {
+    .post {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  works: CollectionEntry<'works'>[];
+}
+const { works } = Astro.props;
+---
+
+<ul class="grid">
+  {
+    works.map((work) => (
+      <li>
+        <a href={`/gallery/${work.id}`} class="img-link">
+          <Image
+            src={work.data.image}
+            alt={work.data.title}
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 360px"
+            format="webp"
+            loading="lazy"
+          />
+        </a>
+        <p class="meta">
+          <a href={`/gallery/${work.id}`}>{work.data.title}</a>
+          <span class="date">{formatDate(work.data.date)}</span>
+        </p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 10px 0 0;
+  }
+</style>

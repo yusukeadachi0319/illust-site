@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { formatDate } from '../lib/format';
+
+// 活動歴：events を日付降順で全件
+const events = (await getCollection('events')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const profile = {
+  name: 'nakano',
+  text: 'こんにちは、絵をかいたり古い車を直したりしています。',
+};
+const sns = [
+  { href: 'https://x.com/tanosii_____', label: 'x' },
+  { href: 'https://nakano.booth.pm', label: 'booth' }, // 仮。BOOTH 登録後に差し替える
+];
+---
+
+<Base title="about">
+  <section class="section">
+    <h1 class="section-title">about</h1>
+    <dl class="about">
+      <dt>profile</dt>
+      <dd>
+        <p class="name">{profile.name}</p>
+        <p>{profile.text}</p>
+      </dd>
+
+      <dt>events</dt>
+      <dd>
+        <ul>
+          {
+            events.map((ev) => (
+              <li class="event">
+                <span>{formatDate(ev.data.date)}</span>
+                <span>
+                  {ev.data.url ? (
+                    <a href={ev.data.url} target="_blank" rel="noopener noreferrer">
+                      {ev.data.name}
+                    </a>
+                  ) : (
+                    ev.data.name
+                  )}
+                  {ev.data.space && <span class="space">{ev.data.space}</span>}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </dd>
+
+      <dt>links</dt>
+      <dd>
+        <ul class="links">
+          {
+            sns.map(({ href, label }) => (
+              <li>
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </dd>
+    </dl>
+  </section>
+</Base>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    gap: 32px 24px;
+    max-width: 720px;
+    margin: 0;
+  }
+  dt {
+    color: var(--blue-dark);
+  }
+  dd {
+    margin: 0;
+  }
+  .name {
+    color: var(--blue-dark);
+    margin-bottom: 4px;
+  }
+  .event {
+    display: flex;
+    gap: 24px;
+  }
+  .space {
+    margin-left: 1em;
+  }
+  .links {
+    display: flex;
+    gap: 24px;
+  }
+  @media (max-width: 560px) {
+    .about {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    dd + dt {
+      margin-top: 24px;
+    }
+  }
+</style>

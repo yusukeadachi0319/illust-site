@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { formatDate } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  return works.map((work) => ({ params: { slug: work.id }, props: { work } }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+const hasBody = work.body && work.body.trim().length > 0;
+---
+
+<Base title={work.data.title} description={work.data.description}>
+  <article class="work">
+    <div class="image">
+      <Image
+        src={work.data.image}
+        alt={work.data.title}
+        widths={[800, 1200, 1600]}
+        sizes="(max-width: 1100px) 100vw, 1052px"
+        format="webp"
+        loading="eager"
+      />
+    </div>
+    <div class="meta">
+      <h1>{work.data.title}</h1>
+      <p class="line">
+        <span>{work.data.date.getFullYear()}</span>
+        {work.data.tags.length > 0 && <span>{work.data.tags.join(' / ')}</span>}
+      </p>
+      {work.data.description && <p class="desc">{work.data.description}</p>}
+      {hasBody && <div class="prose"><Content /></div>}
+      <p class="back"><a href="/gallery">← gallery</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .work {
+    padding-top: 8px;
+  }
+  .image img {
+    width: 100%;
+    height: auto;
+    max-height: 85vh;
+    object-fit: contain;
+    object-position: left top;
+    background: var(--blue-light);
+  }
+  .meta {
+    margin-top: 24px;
+    max-width: 640px;
+  }
+  .line {
+    display: flex;
+    gap: 24px;
+    margin: 4px 0 16px;
+  }
+  .desc {
+    margin-bottom: 16px;
+  }
+  .back {
+    margin-top: 40px;
+  }
+</style>

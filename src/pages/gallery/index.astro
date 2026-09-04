@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import WorkGrid from '../../components/WorkGrid.astro';
+
+const works = (await getCollection('works')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// 全作品のタグ一覧（フェーズ2でこれをフィルタに使う）
+const tags = [...new Set(works.flatMap((w) => w.data.tags))].sort();
+---
+
+<Base title="gallery">
+  <section class="section">
+    <div class="head">
+      <h1 class="section-title">gallery</h1>
+      <ul class="tags">
+        {tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+    </div>
+    <WorkGrid works={works} />
+  </section>
+</Base>
+
+<style>
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .tags {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+</style>

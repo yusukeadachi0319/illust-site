@@ -1,0 +1,223 @@
+/* ---------------------------------------------------------------
+   グローバルCSS（この1ファイル + 各コンポーネントの scoped style のみ）
+   色はこの3色 + 薄い青のみ：
+     背景         #FFFFFF
+     本文・罫線   #185FA5
+     見出し・強調 #0C447C
+     hover背景等  #E6F1FB
+   --------------------------------------------------------------- */
+
+:root {
+  --white: #ffffff;
+  --blue: #185fa5;
+  --blue-dark: #0c447c;
+  --blue-light: #e6f1fb;
+
+  --font: 'Space Mono', 'JetBrains Mono', 'Noto Sans JP', monospace, sans-serif;
+  --fs: 12.5px;
+  --fs-h: 15px;
+  --ls: 0.08em;
+
+  --max-w: 1100px;
+  --pad-x: 24px;
+  --gap-section: 48px;
+  --t: 150ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--white);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--blue);
+  background: var(--white);
+  font-family: var(--font);
+  font-weight: 300;
+  font-size: var(--fs);
+  line-height: 1.8;
+  letter-spacing: var(--ls);
+  cursor: url('/cursor-pencil.png') 2 30, auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: var(--fs-h);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--t);
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: url('/cursor-pencil-hover.png') 2 30, pointer;
+}
+
+button {
+  cursor: url('/cursor-pencil-hover.png') 2 30, pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--blue);
+  margin: 0;
+}
+
+/* --- レイアウト --- */
+
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.section {
+  border-top: 1px solid var(--blue);
+  padding: var(--gap-section) 0;
+}
+
+.section-title {
+  margin-bottom: 24px;
+  font-size: var(--fs);
+  font-weight: 400;
+  color: var(--blue-dark);
+}
+
+/* --- 画像リンク --- */
+
+.img-link {
+  display: block;
+  background: var(--blue-light);
+  transition: opacity var(--t);
+}
+
+.img-link:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.img-link img {
+  width: 100%;
+  height: auto;
+}
+
+/* --- グリッド：PC 3列 / タブレット 2列 / スマホ 1列 --- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 24px;
+}
+
+/* --- 記事本文（Markdown） --- */
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  margin: 2em 0 0.8em;
+}
+
+.prose p {
+  margin: 0 0 1.2em;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1.2em 1.5em;
+  list-style: revert;
+}
+
+.prose img {
+  margin: 1.5em 0;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.prose blockquote {
+  margin: 0 0 1.2em;
+  padding-left: 1em;
+  border-left: 1px solid var(--blue);
+}
+
+.prose code {
+  font-family: var(--font);
+  background: var(--blue-light);
+  padding: 0 0.3em;
+}
+
+.prose pre {
+  background: var(--blue-light);
+  padding: 1em;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+/* --- レスポンシブ --- */
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --pad-x: 16px;
+    --gap-section: 40px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* カーソル画像はタッチ端末では使わない */
+@media (hover: none), (pointer: coarse) {
+  body,
+  a:hover,
+  button {
+    cursor: auto;
+  }
+}

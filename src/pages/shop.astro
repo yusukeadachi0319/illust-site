@@ -1,0 +1,76 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { formatPrice } from '../lib/format';
+
+const order = { available: 0, upcoming: 1, soldout: 2 };
+const items = (await getCollection('items')).sort((a, b) => order[a.data.status] - order[b.data.status]);
+const rendered = await Promise.all(
+  items.map(async (item) => ({ item, Content: (await render(item)).Content, hasBody: !!item.body?.trim() })),
+);
+---
+
+<Base title="shop">
+  <section class="section">
+    <h1 class="section-title">shop</h1>
+    <p class="lead">同人誌・グッズは BOOTH で頒布しています。各アイテムから商品ページへ移動します。</p>
+    <ul class="grid">
+      {
+        rendered.map(({ item, Content, hasBody }) => (
+          <li class:list={['item', { soldout: item.data.status === 'soldout' }]}>
+            <a href={item.data.boothUrl} class="img-link" target="_blank" rel="noopener noreferrer">
+              <Image
+                src={item.data.image}
+                alt={item.data.title}
+                widths={[400, 800, 1200]}
+                sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 360px"
+                format="webp"
+                loading="lazy"
+              />
+            </a>
+            <p class="meta">
+              <a href={item.data.boothUrl} target="_blank" rel="noopener noreferrer">
+                {item.data.title}
+              </a>
+              <span>{formatPrice(item.data.price)}</span>
+            </p>
+            <p class="sub">
+              <span>{item.data.type}</span>
+              {item.data.status !== 'available' && <span>{item.data.status}</span>}
+            </p>
+            {hasBody && (
+              <div class="prose body">
+                <Content />
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .lead {
+    margin-bottom: 32px;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 10px 0 0;
+  }
+  .sub {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+  }
+  .body {
+    margin-top: 8px;
+  }
+  .soldout .img-link {
+    opacity: 0.5;
+  }
+</style>

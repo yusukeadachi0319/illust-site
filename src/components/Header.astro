@@ -1,0 +1,104 @@
+---
+interface Props {
+  siteName: string;
+}
+const { siteName } = Astro.props;
+const nav = [
+  { href: '/gallery', label: 'gallery' },
+  { href: '/shop', label: 'shop' },
+  { href: '/blog', label: 'blog' },
+  { href: '/about', label: 'about' },
+];
+const current = Astro.url.pathname;
+const isCurrent = (href: string) => current === href || current === href + '/' || current.startsWith(href + '/');
+---
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo" id="site-logo">{siteName}</a>
+    <nav class="nav" aria-label="main">
+      <ul>
+        {
+          nav.map(({ href, label }) => (
+            <li>
+              <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    padding: 28px 0;
+  }
+  .header-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .logo {
+    color: var(--blue-dark);
+    font-weight: 400;
+    font-size: var(--fs-h);
+    letter-spacing: 0.12em;
+    user-select: none;
+  }
+  .nav ul {
+    display: flex;
+    gap: 24px;
+  }
+  .nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  @media (max-width: 560px) {
+    .header {
+      padding: 20px 0;
+    }
+    .nav ul {
+      gap: 16px;
+    }
+  }
+</style>
+
+<script>
+  // ロゴのクリックカウント（フェーズ1）
+  // 1.5秒以内に5回連続でクリックしたら console.log('easter egg') を出す。
+  // フェーズ3でここからミニゲームのオーバーレイを開く。
+  const logo = document.getElementById('site-logo') as HTMLAnchorElement | null;
+  if (logo) {
+    const WINDOW_MS = 1500;
+    const REQUIRED = 5;
+    const NAV_DELAY_MS = 300; // 単クリックでトップに遷移するまでの猶予
+    let clicks: number[] = [];
+    let navTimer: number | undefined;
+    const isTop = location.pathname === '/';
+
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      const now = Date.now();
+      clicks = clicks.filter((t) => now - t < WINDOW_MS);
+      clicks.push(now);
+      window.clearTimeout(navTimer);
+
+      if (clicks.length >= REQUIRED) {
+        clicks = [];
+        console.log('easter egg');
+        return;
+      }
+
+      // 連打中でなければトップへ遷移（トップにいるときは何もしない）
+      if (!isTop) {
+        navTimer = window.setTimeout(() => {
+          if (clicks.length === 1) location.href = logo.href;
+        }, NAV_DELAY_MS);
+      }
+    });
+  }
+</script>

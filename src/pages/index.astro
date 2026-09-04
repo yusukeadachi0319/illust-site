@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import WorkGrid from '../components/WorkGrid.astro';
+import { getNextEvent } from '../lib/events';
+import { formatDate } from '../lib/format';
+import keyVisual from '../assets/key-visual.png'; // TODO: キービジュアルを差し替える
+
+// 最新作6点：featured を優先し、制作日の新しい順
+const works = (await getCollection('works')).sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return b.data.date.getTime() - a.data.date.getTime();
+});
+const latest = works.slice(0, 6);
+
+const items = (await getCollection('items')).filter((i) => i.data.status !== 'soldout').slice(0, 3);
+const nextEvent = await getNextEvent();
+---
+
+<Base>
+  <!-- key visual -->
+  <section class="kv">
+    <Image src={keyVisual} alt="" widths={[800, 1200, 1600]} sizes="(max-width: 1100px) 100vw, 1052px" format="webp" loading="eager" />
+  </section>
+
+  <!-- latest works -->
+  <section class="section">
+    <h2 class="section-title"><a href="/gallery">works</a></h2>
+    <WorkGrid works={latest} />
+  </section>
+
+  <!-- shop / next event -->
+  <section class="section two-col">
+    <div>
+      <h2 class="section-title"><a href="/shop">shop</a></h2>
+      <ul class="list">
+        {
+          items.map((item) => (
+            <li>
+              <a href={item.data.boothUrl} target="_blank" rel="noopener noreferrer">
+                {item.data.title}
+              </a>
+              {item.data.status === 'upcoming' && <span class="note">upcoming</span>}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    {
+      nextEvent && (
+        <div>
+          <h2 class="section-title">next event</h2>
+          <ul class="list">
+            <li>
+              {nextEvent.data.url ? (
+                <a href={nextEvent.data.url} target="_blank" rel="noopener noreferrer">
+                  {nextEvent.data.name}
+                </a>
+              ) : (
+                nextEvent.data.name
+              )}
+            </li>
+            <li>{formatDate(nextEvent.data.date)}</li>
+            {nextEvent.data.space && <li>{nextEvent.data.space}</li>}
+          </ul>
+        </div>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .kv {
+    padding-bottom: var(--gap-section);
+  }
+  .kv img {
+    width: 100%;
+    height: auto;
+    background: var(--blue-light);
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 24px;
+  }
+  .list li + li {
+    margin-top: 4px;
+  }
+  .note {
+    margin-left: 1em;
+  }
+  @media (max-width: 560px) {
+    .two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

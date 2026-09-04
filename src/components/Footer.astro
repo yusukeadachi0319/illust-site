@@ -1,0 +1,50 @@
+---
+interface Props {
+  siteName: string;
+}
+const { siteName } = Astro.props;
+const sns = [
+  { href: 'https://x.com/tanosii_____', label: 'x' },
+  { href: 'https://nakano.booth.pm', label: 'booth' }, // 仮。BOOTH 登録後に差し替える
+];
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <ul class="sns">
+      {
+        sns.map(({ href, label }) => (
+          <li>
+            <a href={href} target="_blank" rel="noopener noreferrer">
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="copy">© 2026 {siteName}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--gap-section);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding-top: 24px;
+    padding-bottom: 40px;
+    border-top: 1px solid var(--blue);
+  }
+  .sns {
+    display: flex;
+    gap: 24px;
+  }
+  .copy {
+    margin: 0;
+    color: var(--blue-dark);
+  }
+</style>
