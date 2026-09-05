@@ -174,17 +174,19 @@ about ページの「events」には全件が日付降順で並ぶので、終�
 Google Fonts の CSS は `preload` → `stylesheet` の切り替えで非同期に読み込んでいる（レンダリングをブロックしない）。
 Lighthouse（モバイル）はフェーズ2時点で Performance 97〜100、Accessibility 100、Best Practices 96〜100、SEO 100。
 
-## Cloudflare Pages へのデプロイ
+## Cloudflare Workers へのデプロイ
 
-1. このリポジトリを GitHub に push する。
-2. Cloudflare ダッシュボード → Workers & Pages → Create → Pages → Connect to Git でリポジトリを選ぶ。
-3. ビルド設定：
+Cloudflare ダッシュボードの Workers & Pages で GitHub リポジトリを連携済み。`main` へ push するたびに自動デプロイされる。
 
 | 項目 | 値 |
 |---|---|
-| Framework preset | Astro |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Node.js version | `.node-version` ファイル（22）が自動で使われる |
+| Build command | `npm run build`（`npx astro build` でも同じ） |
+| Deploy command | `npx wrangler deploy` |
+| 配信ディレクトリ | `dist`（`wrangler.jsonc` の `assets.directory`） |
+| Node.js version | `.node-version`（24） |
 
-以降は `main` ブランチへ push するたびに自動デプロイされる。
+`wrangler.jsonc` は必ずリポジトリに置いておく。これが無いと wrangler の自動設定（autoconfig）が
+`@astrojs/cloudflare` アダプターを勝手に追加し、画像が実行時変換の URL（`/_image?...`）になって
+静的配信では 404 になる（2026-09-05 に実際に起きた）。このサイトは完全に静的なのでアダプターは不要。
+
+`sharp`（画像変換）は Astro の任意依存だが、ビルド環境で確実に入るよう `package.json` に明示している。

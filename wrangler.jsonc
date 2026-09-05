@@ -1,0 +1,13 @@
+// Cloudflare Workers の設定（静的配信のみ）。
+// このファイルがあると wrangler の自動設定（autoconfig）が動かず、
+// @astrojs/cloudflare アダプターが勝手に追加されない。
+// アダプターが入ると画像が実行時変換（/_image）になり、静的配信では 404 になるため。
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "illust-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
