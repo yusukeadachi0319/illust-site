@@ -1,7 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { siteName, siteDescription, blogTitle } from '../lib/site';
+import { siteName, siteDescription, rssTitle } from '../lib/site';
 import '../styles/global.css';
 
 interface Props {
@@ -43,7 +43,7 @@ const fontsUrl =
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title={blogTitle} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={rssTitle} href="/rss.xml" />
 
     <meta property="og:site_name" content={siteName} />
     <meta property="og:type" content={ogType} />

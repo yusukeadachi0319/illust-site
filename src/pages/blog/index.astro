@@ -1,32 +1,31 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { formatDate } from '../../lib/format';
+import PostList from '../../components/PostList.astro';
 import { blogTitle, blogDescription } from '../../lib/site';
 
-// 日付降順
+// 最初から見せる記事数（それより古いものは「more」に格納）
+const VISIBLE = 3;
+
+// 日付降順。tags に event があれば「イベント告知」、それ以外は「パンダ飼育日記」
 const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const isEvent = (p: (typeof posts)[number]) => (p.data.tags ?? []).includes('event');
+const events = posts.filter(isEvent);
+const diary = posts.filter((p) => !isEvent(p));
 ---
 
-<Base title={blogTitle} description={blogDescription}>
+<Base title="blog" description={`イベント告知と${blogTitle}。${blogDescription}`}>
+  <section class="section">
+    <h1 class="section-title">イベント告知</h1>
+    <PostList posts={events} visible={VISIBLE} />
+  </section>
+
   <section class="section">
     <div class="head">
-      <h1 class="section-title">{blogTitle}</h1>
+      <h2 class="section-title">{blogTitle}</h2>
       <p class="lead">{blogDescription}</p>
     </div>
-    <ul class="posts">
-      {
-        posts.map((post) => (
-          <li class="post">
-            <span class="date">{formatDate(post.data.date)}</span>
-            <span class="title">
-              <a href={`/blog/${post.id}`}>{post.data.title}</a>
-              {post.data.description && <span class="desc">{post.data.description}</span>}
-            </span>
-          </li>
-        ))
-      }
-    </ul>
+    <PostList posts={diary} visible={VISIBLE} />
   </section>
 </Base>
 
@@ -40,28 +39,5 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime()
   }
   .lead {
     margin-bottom: 24px;
-  }
-  .post {
-    display: grid;
-    grid-template-columns: 8em 1fr;
-    gap: 16px;
-    padding: 12px 0;
-    border-top: 1px solid var(--blue);
-  }
-  .post:last-child {
-    border-bottom: 1px solid var(--blue);
-  }
-  .title {
-    display: flex;
-    flex-direction: column;
-  }
-  .title a {
-    color: var(--blue-dark);
-  }
-  @media (max-width: 560px) {
-    .post {
-      grid-template-columns: 1fr;
-      gap: 2px;
-    }
   }
 </style>

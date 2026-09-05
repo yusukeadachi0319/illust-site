@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  /** 最初から見せる記事数。これより古いものは「more」に格納 */
+  visible?: number;
+}
+const { posts, visible = 3 } = Astro.props;
+const recent = posts.slice(0, visible);
+const older = posts.slice(visible);
+---
+
+{posts.length === 0 && <p class="empty">no posts</p>}
+
+<ul class="posts">
+  {
+    recent.map((post) => (
+      <li class="post">
+        <span class="date">{formatDate(post.data.date)}</span>
+        <span class="title">
+          <a href={`/blog/${post.id}`}>{post.data.title}</a>
+          {post.data.description && <span class="desc">{post.data.description}</span>}
+        </span>
+      </li>
+    ))
+  }
+</ul>
+
+{
+  older.length > 0 && (
+    <details class="more">
+      <summary>more ({older.length})</summary>
+      <ul class="posts">
+        {older.map((post) => (
+          <li class="post">
+            <span class="date">{formatDate(post.data.date)}</span>
+            <span class="title">
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+              {post.data.description && <span class="desc">{post.data.description}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
+
+<style>
+  .post {
+    display: grid;
+    grid-template-columns: 8em 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--blue);
+  }
+  .posts > .post:last-child {
+    border-bottom: 1px solid var(--blue);
+  }
+  .title {
+    display: flex;
+    flex-direction: column;
+  }
+  .title a {
+    color: var(--blue-dark);
+  }
+  .empty {
+    margin: 0;
+  }
+  .more {
+    margin-top: 12px;
+  }
+  .more summary {
+    display: inline-block;
+    list-style: none;
+    cursor: url('/cursor-pencil-hover.png') 2 30, pointer;
+  }
+  .more summary::-webkit-details-marker {
+    display: none;
+  }
+  .more summary:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .more[open] summary {
+    margin-bottom: 12px;
+  }
+  .more[open] .posts > .post:first-child {
+    border-top: 0;
+  }
+  @media (max-width: 560px) {
+    .post {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+</style>

@@ -103,7 +103,9 @@ shop ページは `available` → `upcoming` → `soldout` の順で並ぶ。`so
 
 ## 記事の追加手順
 
-ブログの名前は「パンダ飼育日記」（車修理の記録・日記・イベント告知）。名前と説明は `src/lib/site.ts` の `blogTitle` / `blogDescription` で変えられる。URL は `/blog` のまま。
+`/blog` は上段「イベント告知」、下段「パンダ飼育日記」の2段構成。`tags` に `event` を入れた記事が上段、それ以外は下段に入る。
+各段は新しい記事3件だけ表示し、それより古いものは「more」を開くと出る（件数は `src/pages/blog/index.astro` の `VISIBLE`）。
+日記の名前と説明は `src/lib/site.ts` の `blogTitle` / `blogDescription` で変えられる。
 
 `src/content/blog/` に `.md` ファイルを作る。画像は不要。
 
