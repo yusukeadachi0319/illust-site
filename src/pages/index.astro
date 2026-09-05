@@ -5,14 +5,12 @@ import Base from '../layouts/Base.astro';
 import WorkGrid from '../components/WorkGrid.astro';
 import { getNextEvent } from '../lib/events';
 import { formatDate } from '../lib/format';
-import keyVisual from '../assets/key-visual.png'; // TODO: キービジュアルを差し替える
+import keyVisual from '../assets/works/cat-summer.png'; // キービジュアル
 
-// 最新作6点：featured を優先し、制作日の新しい順
-const works = (await getCollection('works')).sort((a, b) => {
-  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
-  return b.data.date.getTime() - a.data.date.getTime();
-});
-const latest = works.slice(0, 6);
+// recent works：featured: true のものを制作日の新しい順に最大6点（同日は id 順）
+const latest = (await getCollection('works', ({ data }) => data.featured))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.id.localeCompare(b.id))
+  .slice(0, 6);
 
 const items = (await getCollection('items')).filter((i) => i.data.status !== 'soldout').slice(0, 3);
 const nextEvent = await getNextEvent();
@@ -26,7 +24,7 @@ const nextEvent = await getNextEvent();
 
   <!-- latest works -->
   <section class="section">
-    <h2 class="section-title"><a href="/gallery">works</a></h2>
+    <h2 class="section-title"><a href="/gallery">recent works</a></h2>
     <WorkGrid works={latest} />
   </section>
 

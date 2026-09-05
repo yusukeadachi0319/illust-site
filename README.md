@@ -18,7 +18,7 @@ Node.js 22 以上が必要。
 
 ```
 src/
-  assets/        画像（works/ items/ key-visual.png）。ビルド時に WebP 変換される
+  assets/        画像（works/ items/）。ビルド時に WebP 変換される
   content/       コンテンツ（Markdown + frontmatter）
     works/       作品
     items/       同人誌・グッズ
@@ -68,7 +68,8 @@ description: "夏の終わりの光を描いた習作。"
 
 frontmatter の下に本文（Markdown）を書くと、作品ページのコメントとして表示される。
 
-トップに出る6点は「`featured: true` を優先 → 制作日の新しい順」で自動選出。
+トップの「recent works」には `featured: true` の作品だけが、制作日の新しい順に最大6点並ぶ（同じ日付ならファイル名順）。
+ファイル名は URL になるので英数字とハイフンにする（例：`cat-summer.png`、`cat-summer.md`）。
 
 ## グッズ・同人誌の追加手順
 
@@ -149,7 +150,7 @@ about ページの「events」には全件が日付降順で並ぶので、終�
 | `src/layouts/Base.astro` | `siteName`（ロゴ・タブタイトルに使う）。現在 `nakano` |
 | `src/components/Footer.astro` | フッターの SNS リンクと © 表記。BOOTH の URL は仮（登録後に差し替える） |
 | `src/pages/about.astro` | プロフィール文、SNS リンク（BOOTH の URL は仮） |
-| `src/pages/index.astro` | キービジュアル（`src/assets/key-visual.png`） |
+| `src/pages/index.astro` | キービジュアル（先頭の `import keyVisual` の画像パス。現在 `works/cat-summer.png`） |
 | `astro.config.mjs` | 先頭の `SITE_URL`（公開 URL）。独自ドメインに変えるときはここだけ直す。canonical / OGP / sitemap / RSS / robots.txt すべてに反映される |
 | `src/lib/site.ts` | `siteName`（サイト名）と `siteDescription`（既定の description）。レイアウト・RSS・OGP 画像で共有 |
 | `public/og-default.png` | 共通の OGP 画像（1200×630）。`node scripts/make-og-image.mjs` で再生成できる |

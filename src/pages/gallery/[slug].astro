@@ -55,11 +55,10 @@ const description = work.data.description ?? `${work.data.title}（${work.data.d
     padding-top: 8px;
   }
   .image img {
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: auto;
     max-height: 85vh;
-    object-fit: contain;
-    object-position: left top;
     background: var(--blue-light);
   }
   .meta {
