@@ -152,8 +152,8 @@ about ページの「events」には全件が日付降順で並ぶので、終�
 | ファイル | 内容 |
 |---|---|
 | `src/layouts/Base.astro` | `siteName`（ロゴ・タブタイトルに使う）。現在 `nakano` |
-| `src/components/Footer.astro` | フッターの SNS リンクと © 表記。BOOTH の URL は仮（登録後に差し替える） |
-| `src/pages/about.astro` | プロフィール文、SNS リンク（BOOTH の URL は仮） |
+| `src/components/Footer.astro` | フッターの SNS リンク（X, BOOTH）と © 表記 |
+| `src/pages/about.astro` | プロフィール文、SNS リンク |
 | `src/pages/index.astro` | キービジュアル（先頭の `import keyVisual` の画像パス。現在 `works/cat-summer.png`） |
 | `astro.config.mjs` | 先頭の `SITE_URL`（公開 URL）。独自ドメインに変えるときはここだけ直す。canonical / OGP / sitemap / RSS / robots.txt すべてに反映される |
 | `src/lib/site.ts` | `siteName`（サイト名）と `siteDescription`（既定の description）。レイアウト・RSS・OGP 画像で共有 |
