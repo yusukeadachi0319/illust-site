@@ -103,6 +103,8 @@ shop ページは `available` → `upcoming` → `soldout` の順で並ぶ。`so
 
 ## 記事の追加手順
 
+ブログの名前は「パンダ飼育日記」（車修理の記録・日記・イベント告知）。名前と説明は `src/lib/site.ts` の `blogTitle` / `blogDescription` で変えられる。URL は `/blog` のまま。
+
 `src/content/blog/` に `.md` ファイルを作る。画像は不要。
 
 ```md
@@ -121,7 +123,7 @@ tags: [news]
 | `title` | ○ | 記事タイトル |
 | `date` | ○ | 公開日（`YYYY-MM-DD`）。一覧はこの日付の降順 |
 | `description` | 任意 | 一覧に表示する一行説明 |
-| `tags` | 任意 | 例：`[news, event]` |
+| `tags` | 任意 | 例：`[car]`（車修理）、`[diary]`（日記）、`[event]`（イベント告知）、`[news]` |
 
 記事内に画像を入れる場合は `src/assets/blog/` に置き、本文に `![説明](../../assets/blog/xxx.png)` と書く。
 

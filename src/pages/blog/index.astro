@@ -2,14 +2,18 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { formatDate } from '../../lib/format';
+import { blogTitle, blogDescription } from '../../lib/site';
 
 // 日付降順
 const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Base title="blog" description="制作や参加イベントについての記事。">
+<Base title={blogTitle} description={blogDescription}>
   <section class="section">
-    <h1 class="section-title">blog</h1>
+    <div class="head">
+      <h1 class="section-title">{blogTitle}</h1>
+      <p class="lead">{blogDescription}</p>
+    </div>
     <ul class="posts">
       {
         posts.map((post) => (
@@ -27,6 +31,16 @@ const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime()
 </Base>
 
 <style>
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .lead {
+    margin-bottom: 24px;
+  }
   .post {
     display: grid;
     grid-template-columns: 8em 1fr;
