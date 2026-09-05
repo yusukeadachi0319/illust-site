@@ -20,14 +20,18 @@ const rendered = await Promise.all(
         rendered.map(({ item, Content, hasBody }) => (
           <li class:list={['item', { soldout: item.data.status === 'soldout' }]}>
             <a href={item.data.boothUrl} class="img-link" target="_blank" rel="noopener noreferrer">
-              <Image
-                src={item.data.image}
-                alt={item.data.title}
-                widths={[400, 800, 1200]}
-                sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 360px"
-                format="webp"
-                loading="lazy"
-              />
+              {item.data.image ? (
+                <Image
+                  src={item.data.image}
+                  alt={item.data.title}
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 360px"
+                  format="webp"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="no-image" aria-hidden="true">no image</span>
+              )}
             </a>
             <p class="meta">
               <a href={item.data.boothUrl} target="_blank" rel="noopener noreferrer">
@@ -72,5 +76,13 @@ const rendered = await Promise.all(
   }
   .soldout .img-link {
     opacity: 0.5;
+  }
+  /* 画像未登録のときの枠（A5 縦の比率） */
+  .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 148 / 210;
+    background: var(--blue-light);
   }
 </style>

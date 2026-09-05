@@ -2,7 +2,6 @@
 title: "LAZY SUNDAY CLUB vol.1"
 type: doujinshi
 price: 500
-image: ../../assets/works/lazy-sunday-club.png
 boothUrl: https://nakano.booth.pm
 status: upcoming
 ---

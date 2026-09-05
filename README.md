@@ -94,7 +94,7 @@ B5 / 24p / フルカラーイラスト集。
 | `title` | ○ | 商品名 |
 | `type` | ○ | `doujinshi` / `sticker` / `keychain` / `other` のいずれか |
 | `price` | ○ | 円（数字のみ） |
-| `image` | ○ | `src/assets` 配下の画像への相対パス |
+| `image` | 任意 | `src/assets` 配下の画像への相対パス。書かなければ薄青の枠だけ表示（現物が届く前など） |
 | `boothUrl` | ○ | BOOTH の商品ページ URL。クリックでここへ飛ぶ |
 | `status` | ○ | `available` / `soldout` / `upcoming` のいずれか |
 

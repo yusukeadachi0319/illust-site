@@ -23,7 +23,7 @@ const items = defineCollection({
       title: z.string(),
       type: z.enum(['doujinshi', 'sticker', 'keychain', 'other']),
       price: z.number(), // 円
-      image: image(),
+      image: image().optional(), // 無い場合は薄青の枠だけ表示（現物が届く前など）
       boothUrl: z.string().url(), // BOOTH の商品ページ URL
       status: z.enum(['available', 'soldout', 'upcoming']),
     }),
